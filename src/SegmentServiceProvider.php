@@ -33,7 +33,6 @@ class SegmentServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->setupConfig();
-
         if ($writeKey = $this->app->config->get('segment.write_key')) {
             Segment::init($writeKey, (array) $this->app->config->get('segment.init_options'));
         }
@@ -66,7 +65,7 @@ class SegmentServiceProvider extends ServiceProvider
      */
     protected function setupQueue()
     {
-        if ($this->app->runningInConsole()) {
+        if ($this->app->runningInConsole() && !empty($this->app->config->get('segment.write_key'))) {
             $this->app->queue->looping(function () {
                 Segment::flush();
             });
